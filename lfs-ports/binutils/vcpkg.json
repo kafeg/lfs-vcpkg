@@ -1,0 +1,13 @@
+{
+  "name": "binutils",
+  "version": "2.36.1",
+  "port-version": 1,
+  "description": [
+    "The GNU Binutils are a collection of binary tools."
+  ],
+  "homepage": "http://www.gnu.org/software/binutils/",
+  "supports": "!(uwp|windows|osx)",
+  "dependencies": [
+    "texinfo"
+  ]
+}
