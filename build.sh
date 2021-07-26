@@ -1,12 +1,17 @@
 #!/bin/bash
 
-# Configuration
+# Basic Configuration
 REPO_ROOT=`pwd`
 VCPKG_ROOT=$REPO_ROOT/vcpkg
 VCPKG_TRIPLET=x64-linux
 VCPKG_TAG="2021.05.12"
 VCPKG_DISABLE_METRICS=true
 VCPKG_LFS_OVERLAY_PORTS=$REPO_ROOT/lfs-ports
+
+# LFS Configuration
+LC_ALL=POSIX
+LFS_TGT=$(uname -m)-lfs-linux-gnu
+LFS_MNT=/mnt/lfs
 
 # Get vcpkg
 if [ ! -d "$VCPKG_ROOT" ]
@@ -23,7 +28,7 @@ then
   ./bootstrap-vcpkg.sh -disableMetrics
 fi
 
-./vcpkg --overlay-ports=$VCPKG_LFS_OVERLAY_PORTS --triplet=$VCPKG_TRIPLET install binutils
+./vcpkg --overlay-ports=$VCPKG_LFS_OVERLAY_PORTS --triplet=$VCPKG_TRIPLET install binutils mpfr mpc gmp gcc
 
 ./vcpkg --overlay-ports=$VCPKG_LFS_OVERLAY_PORTS --triplet=$VCPKG_TRIPLET --no-dry-run upgrade
 

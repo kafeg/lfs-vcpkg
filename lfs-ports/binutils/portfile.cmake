@@ -20,6 +20,7 @@ vcpkg_configure_make(
     AUTOCONFIG
     SOURCE_PATH ${SOURCE_PATH}
     OPTIONS --disable-nls --disable-werror --disable-docs
+    #--target=$ENV{LFS_TGT}
 )
 
 vcpkg_install_make()
