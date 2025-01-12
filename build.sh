@@ -1,17 +1,28 @@
 #!/bin/bash
 
 # Basic Configuration
-REPO_ROOT=`pwd`
-VCPKG_ROOT=$REPO_ROOT/vcpkg
-VCPKG_TRIPLET=x64-linux
-VCPKG_TAG="2021.05.12"
-VCPKG_DISABLE_METRICS=true
-VCPKG_LFS_OVERLAY_PORTS=$REPO_ROOT/lfs-ports
+export REPO_ROOT=`pwd`
+export VCPKG_ROOT=$REPO_ROOT/vcpkg
+export VCPKG_TAG="2024.12.16"
+export VCPKG_DISABLE_METRICS=true
+export VCPKG_LFS_OVERLAY_PORTS=$REPO_ROOT/lfs-ports
+export VCPKG_FORCE_SYSTEM_BINARIES=1
+
+# Check the architecture of the host system
+ARCH=$(uname -m)
+if [ "$ARCH" == "aarch64" ]; then
+    VCPKG_TRIPLET="arm64-linux"
+else
+    VCPKG_TRIPLET="x64-linux"
+fi
+
+# Output the selected triplet (optional)
+echo "VCPKG_TRIPLET is set to $VCPKG_TRIPLET"
 
 # LFS Configuration
-LC_ALL=POSIX
-LFS_TGT=$(uname -m)-lfs-linux-gnu
-LFS_MNT=/mnt/lfs
+export LC_ALL=POSIX
+export LFS_TGT=$(uname -m)-lfs-linux-gnu
+export LFS_MNT=/mnt/lfs
 
 # Get vcpkg
 if [ ! -d "$VCPKG_ROOT" ]
@@ -30,7 +41,7 @@ fi
 
 ./vcpkg --overlay-ports=$VCPKG_LFS_OVERLAY_PORTS --triplet=$VCPKG_TRIPLET install binutils mpfr mpc gmp gcc
 
-./vcpkg --overlay-ports=$VCPKG_LFS_OVERLAY_PORTS --triplet=$VCPKG_TRIPLET --no-dry-run upgrade
+#./vcpkg --overlay-ports=$VCPKG_LFS_OVERLAY_PORTS --triplet=$VCPKG_TRIPLET --no-dry-run upgrade
 
 cd $REPO_ROOT
 exit 0

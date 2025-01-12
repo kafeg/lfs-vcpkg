@@ -1,18 +1,15 @@
-vcpkg_fail_port_install(ON_TARGET "OSX" "Windows" "UWP")
-
 set(VCPKG_POLICY_EMPTY_INCLUDE_FOLDER enabled)
 
-set(TARGET_VERSION 6.7)
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://ftp.gnu.org/gnu/texinfo/texinfo-${TARGET_VERSION}.tar.xz"
-    FILENAME "binutils-${TARGET_VERSION}.tar.xz"
-    SHA512 da55a0d0a760914386393c5e8e864540265d8550dc576f784781a6d72501918e8afce716ff343e5c2a0ce09cf921bfaf0a48ecb49f6182a7d10e920ae3ea17e7
+    URLS "https://ftp.gnu.org/gnu/texinfo/texinfo-${VERSION}.tar.xz"
+    FILENAME "texinfo-${VERSION}.tar.xz"
+    SHA512 ceab03e8422d800b08c7b44e8263b0a1f35bb7758d83a81136df6f3304a14daecda98a12a282afb85406d2ca2f665b2295e10b6f4064156ea1285d80d5d355db
 )
 
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
-    REF ${TARGET_VERSION}
+    REF ${VERSION}
 )
 
 vcpkg_configure_make(

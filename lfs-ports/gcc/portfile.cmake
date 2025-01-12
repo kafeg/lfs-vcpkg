@@ -1,16 +1,13 @@
-vcpkg_fail_port_install(ON_TARGET "OSX" "Windows" "UWP")
-
-set(TARGET_VERSION 10.2.0)
 vcpkg_download_distfile(ARCHIVE
-    URLS "http://ftp.gnu.org/gnu/gcc/gcc-${TARGET_VERSION}/gcc-${TARGET_VERSION}.tar.xz"
-    FILENAME "gcc-${TARGET_VERSION}.tar.xz"
-    SHA512 42ae38928bd2e8183af445da34220964eb690b675b1892bbeb7cd5bb62be499011ec9a93397dba5e2fb681afadfc6f2767d03b9035b44ba9be807187ae6dc65e
+    URLS "http://ftp.gnu.org/gnu/gcc/gcc-${VERSION}/gcc-${VERSION}.tar.xz"
+    FILENAME "gcc-${VERSION}.tar.xz"
+    SHA512 932bdef0cda94bacedf452ab17f103c0cb511ff2cec55e9112fc0328cbf1d803b42595728ea7b200e0a057c03e85626f937012e49a7515bc5dd256b2bf4bc396
 )
 
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
-    REF ${TARGET_VERSION}
+    REF ${VERSION}
 )
 
 set(ENV{C_INCLUDE_PATH} "/")

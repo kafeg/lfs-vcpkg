@@ -1,12 +1,12 @@
 {
   "name": "gcc",
-  "version": "10.2.0",
+  "version": "14.2.0",
   "port-version": 1,
   "description": [
     "The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, Go, and D, as well as libraries for these languages."
   ],
   "homepage": "https://gcc.gnu.org/",
-  "supports": "!(uwp|windows|osx)",
+  "supports": "linux",
   "dependencies": [
     "binutils",
     "mpfr",

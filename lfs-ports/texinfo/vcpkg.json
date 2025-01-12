@@ -1,10 +1,10 @@
 {
   "name": "texinfo",
-  "version": "6.7",
+  "version": "7.1",
   "port-version": 1,
   "description": [
     "Texinfo is the official documentation format of the GNU project."
   ],
   "homepage": "https://www.gnu.org/software/texinfo/",
-  "supports": "!(uwp|windows|osx)"
+  "supports": "linux"
 }
