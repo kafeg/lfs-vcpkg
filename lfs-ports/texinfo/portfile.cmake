@@ -3,7 +3,7 @@ set(VCPKG_POLICY_EMPTY_INCLUDE_FOLDER enabled)
 vcpkg_download_distfile(ARCHIVE
     URLS "https://ftp.gnu.org/gnu/texinfo/texinfo-${VERSION}.tar.xz"
     FILENAME "texinfo-${VERSION}.tar.xz"
-    SHA512 ceab03e8422d800b08c7b44e8263b0a1f35bb7758d83a81136df6f3304a14daecda98a12a282afb85406d2ca2f665b2295e10b6f4064156ea1285d80d5d355db
+    SHA512 8e67337ae12a552fc620c43725507a4978710ea6630e98b0f5e98eb3f79a90e191dde5225699aa6217c26f171d277461f76150f0459cd07b40c3234d2f3d89bf
 )
 
 vcpkg_extract_source_archive_ex(
@@ -13,7 +13,7 @@ vcpkg_extract_source_archive_ex(
 )
 
 vcpkg_configure_make(
-    #AUTOCONFIG
+    #AUTOCONFIG # prevent fail on 'configure.ac:35: error: Please use exactly Autoconf 2.69 instead of 2.71. c'
     SOURCE_PATH ${SOURCE_PATH}
 )
 

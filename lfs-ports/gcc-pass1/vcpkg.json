@@ -1,6 +1,6 @@
 {
-  "name": "gcc",
-  "version": "14.2.0",
+  "name": "gcc-pass1",
+  "version": "15.2.0",
   "port-version": 1,
   "description": [
     "The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, Go, and D, as well as libraries for these languages."
@@ -8,7 +8,7 @@
   "homepage": "https://gcc.gnu.org/",
   "supports": "linux",
   "dependencies": [
-    "binutils",
+    "binutils-pass1",
     "mpfr",
     "mpc",
     "gmp"

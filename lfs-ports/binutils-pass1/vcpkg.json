@@ -1,6 +1,6 @@
 {
-  "name": "binutils",
-  "version": "2.43.1",
+  "name": "binutils-pass1",
+  "version": "2.45",
   "port-version": 1,
   "description": [
     "The GNU Binutils are a collection of binary tools."

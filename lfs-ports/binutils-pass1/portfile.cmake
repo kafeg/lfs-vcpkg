@@ -1,7 +1,7 @@
 vcpkg_download_distfile(ARCHIVE
     URLS "http://ftp.gnu.org/gnu/binutils/binutils-${VERSION}.tar.xz"
     FILENAME "binutils-${VERSION}.tar.xz"
-    SHA512 20977ad17729141a2c26d358628f44a0944b84dcfefdec2ba029c2d02f40dfc41cc91c0631044560d2bd6f9a51e1f15846b4b311befbe14f1239f14ff7d57824
+    SHA512 c7b10a7466d9fd398d7a0b3f2a43318432668d714f2ec70069a31bdc93c86d28e0fe83792195727167743707fbae45337c0873a0786416db53bbf22860c16ce7
 )
 
 vcpkg_extract_source_archive_ex(
@@ -14,9 +14,9 @@ set(ENV{C_INCLUDE_PATH} "/")
 set(ENV{MAKEINFO} "${CURRENT_INSTALLED_DIR}/tools/texinfo/bin/makeinfo")
 
 vcpkg_configure_make(
-    AUTOCONFIG
+    #AUTOCONFIG # prevent fail on 'configure.ac:35: error: Please use exactly Autoconf 2.69 instead of 2.71. c'
     SOURCE_PATH ${SOURCE_PATH}
-    OPTIONS --disable-nls --disable-werror --disable-docs
+    OPTIONS --disable-nls --disable-werror --disable-docs --enable-new-dtags --enable-default-hash-style=gnu
     #--target=$ENV{LFS_TGT}
 )
 

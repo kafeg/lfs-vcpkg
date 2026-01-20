@@ -1,6 +1,6 @@
 {
   "name": "texinfo",
-  "version": "7.1",
+  "version": "7.2",
   "port-version": 1,
   "description": [
     "Texinfo is the official documentation format of the GNU project."
