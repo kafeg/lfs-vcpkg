@@ -1,0 +1,14 @@
+{
+  "name": "lfs-preflight",
+  "version": "0.1.0",
+  "port-version": 1,
+  "description": [
+    "Preflight checks for lfs-vcpkg build (validates $LFS, dirs, mount/writable in strict mode)."
+  ],
+  "supports": "linux",
+  "features": {
+    "strict": {
+      "description": "Fail build on preflight problems and print how-to-disk guidance."
+    }
+  }
+}

@@ -31,8 +31,19 @@ if(NOT DEFINED ENV{LFS_TGT})
     set(ENV{LFS_TGT} "${_lfs_arch}-lfs-linux-gnu")
 endif()
 
-# Locale for reproducibility (LFS uses LC_ALL=POSIX in setup). :contentReference[oaicite:3]{index=3}
-set(ENV{LC_ALL} "POSIX")
+# Locale: keep deterministic behavior (POSIX) but preserve UTF-8 encoding for tools like cmake/libarchive.
+# DO NOT set LC_ALL=POSIX: it forces non-UTF8 C locale and breaks extraction of some tarballs.
+unset(ENV{LC_ALL})
+
+set(ENV{LANG} "C.UTF-8")
+set(ENV{LC_CTYPE} "C.UTF-8")     # encoding
+
+# Determinism-friendly categories (POSIX == C)
+set(ENV{LC_COLLATE}  "POSIX")
+set(ENV{LC_NUMERIC}  "POSIX")
+set(ENV{LC_TIME}     "POSIX")
+set(ENV{LC_MONETARY} "POSIX")
+set(ENV{LC_MESSAGES} "POSIX")
 
 # ---------------------------
 # Clean host-polluting env

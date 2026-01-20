@@ -30,6 +30,7 @@ file(REMOVE_RECURSE "${_build_dir}")
 file(MAKE_DIRECTORY "${_build_dir}")
 
 # Configure manually (avoid vcpkg_configure_make prefix injection)
+message(STATUS "Configuring ${PORT}...")
 vcpkg_execute_required_process(
     COMMAND /bin/bash -c
             "cd '${_build_dir}' && '${SOURCE_PATH}/configure' \
@@ -59,12 +60,14 @@ vcpkg_execute_required_process(
     LOGNAME "configure-${PORT}"
 )
 
+message(STATUS "Building ${PORT}...")
 vcpkg_execute_required_process(
     COMMAND make
     WORKING_DIRECTORY "${_build_dir}"
     LOGNAME "build-${PORT}"
 )
 
+message(STATUS "Installing ${PORT}...")
 vcpkg_execute_required_process(
     COMMAND make install
     WORKING_DIRECTORY "${_build_dir}"

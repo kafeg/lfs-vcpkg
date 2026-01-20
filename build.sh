@@ -20,20 +20,6 @@ export LFS="/mnt/lfs"
 export LFS_TGT="$(uname -m)-lfs-linux-gnu"
 
 # -----------------------------
-# LFS preflight checks (early chapters)
-# -----------------------------
-source $REPO_ROOT/preflight.sh
-
-# Basic sanity checks (fail fast)
-if [ ! -d "$LFS" ]; then
-  echo "ERROR: LFS mount dir does not exist: $LFS"
-  echo "Create/mount it first (e.g. /mnt/lfs)."
-  exit 2
-fi
-
-mkdir -p "$LFS/sources" "$LFS/tools"
-
-# -----------------------------
 # Triplets (stage-specific)
 # -----------------------------
 PASS1_TRIPLET="x64-lfs-pass1"
@@ -81,7 +67,25 @@ if $CLEAR; then
          "$VCPKG_ROOT/packages"
 fi
 
-# Helper
+# -----------------------------
+# Strict mode check
+# -----------------------------
+STRICT=false
+if [[ " $* " == *" --strict "* ]] || [[ " $* " == *" -s "* ]]; then
+  STRICT=true
+fi
+
+# -----------------------------
+# Helpers
+# -----------------------------
+vcpkg_remove_stage() {
+  local triplet="$1"
+  shift
+  echo
+  echo "=== vcpkg remove (triplet=$triplet) : $* ==="
+  ./vcpkg --overlay-ports="$VCPKG_LFS_OVERLAY_PORTS" --overlay-triplets="$VCPKG_LFS_OVERLAY_TRIPLETS" --triplet="$triplet" remove "$@"
+}
+
 vcpkg_install_stage() {
   local triplet="$1"
   shift
@@ -91,13 +95,23 @@ vcpkg_install_stage() {
 }
 
 # -----------------------------
+# Preflight (as a vcpkg port)
+# -----------------------------
+vcpkg_remove_stage "$PASS1_TRIPLET" --binarysource=clear "lfs-preflight" # always recheck all pre-flight tests by reinstall this port
+if $STRICT; then
+  vcpkg_install_stage "$PASS1_TRIPLET" --binarysource=clear "lfs-preflight[strict]"
+else
+  vcpkg_install_stage "$PASS1_TRIPLET" --binarysource=clear "lfs-preflight"
+fi
+
+# -----------------------------
 # Stage: PASS 1 (Chapter 5)
 # -----------------------------
 export VCPKG_DEFAULT_TRIPLET="$PASS1_TRIPLET"
 
 #vcpkg_install_stage "$PASS1_TRIPLET" texinfo
 vcpkg_install_stage "$PASS1_TRIPLET" binutils-pass1
-#vcpkg_install_stage "$PASS1_TRIPLET" gcc-pass1
+vcpkg_install_stage "$PASS1_TRIPLET" gcc-pass1
 
 # -----------------------------
 # Stage: TEMP (Chapter 6) - later
