@@ -1,4 +1,4 @@
-# Helper port: installs into $LFS/tools directly, not into vcpkg sandbox.
+# Helper port: installs into $LFS/tools directly (LFS Chapter 5 pass1).
 set(VCPKG_POLICY_CMAKE_HELPER_PORT enabled)
 
 vcpkg_download_distfile(ARCHIVE
@@ -13,9 +13,8 @@ vcpkg_extract_source_archive_ex(
     REF ${VERSION}
 )
 
-# Ensure LFS dirs exist (otherwise configure --prefix=$LFS/tools will fail later).
 if(NOT DEFINED ENV{LFS})
-    message(FATAL_ERROR "ENV{LFS} is not set. Export LFS=/mnt/lfs (or your path) before building.")
+    message(FATAL_ERROR "ENV{LFS} is not set. Export LFS=/mnt/lfs before building.")
 endif()
 if(NOT DEFINED ENV{LFS_TGT})
     message(FATAL_ERROR "ENV{LFS_TGT} is not set. Export LFS_TGT=$(uname -m)-lfs-linux-gnu before building.")
@@ -24,42 +23,53 @@ endif()
 file(MAKE_DIRECTORY "$ENV{LFS}/tools")
 file(MAKE_DIRECTORY "$ENV{LFS}/tools/bin")
 
-# Prevent some headers probing weirdness + ensure makeinfo is found
-set(ENV{C_INCLUDE_PATH} "/")
+# Ensure makeinfo is found (texinfo is a vcpkg dep)
 set(ENV{MAKEINFO} "${CURRENT_INSTALLED_DIR}/tools/texinfo/bin/makeinfo")
 
-vcpkg_configure_make(
-    SOURCE_PATH ${SOURCE_PATH}
-    OPTIONS
-        --prefix=$ENV{LFS}/tools
-        --with-sysroot=$ENV{LFS}
-        --target=$ENV{LFS_TGT}
-        --disable-nls
-        --enable-gprofng=no
-        --disable-werror
-        --enable-new-dtags
-        --enable-default-hash-style=gnu
+# Dedicated build directory (as in the book)
+set(_build_dir "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel")
+file(REMOVE_RECURSE "${_build_dir}")
+file(MAKE_DIRECTORY "${_build_dir}")
+
+# Run configure manually (DO NOT use vcpkg_configure_make: it injects --prefix=${CURRENT_INSTALLED_DIR})
+vcpkg_execute_required_process(
+    COMMAND /bin/bash -c
+            "cd '${_build_dir}' && '${SOURCE_PATH}/configure' \
+              --prefix='$ENV{LFS}/tools' \
+              --with-sysroot='$ENV{LFS}' \
+              --target='$ENV{LFS_TGT}' \
+              --disable-nls \
+              --enable-gprofng=no \
+              --disable-werror \
+              --enable-new-dtags \
+              --enable-default-hash-style=gnu"
+    WORKING_DIRECTORY "${_build_dir}"
+    LOGNAME "configure-${PORT}"
 )
 
-# Build normally inside vcpkg buildtrees
-vcpkg_build_make()
-
-# IMPORTANT:
-# Install directly into $LFS/tools (NO DESTDIR), otherwise vcpkg will redirect into ${CURRENT_PACKAGES_DIR}
-set(_build_dir "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel")
+# Build & install (no DESTDIR!)
 vcpkg_execute_required_process(
-    COMMAND ${MAKE} install
+    COMMAND make
+    WORKING_DIRECTORY "${_build_dir}"
+    LOGNAME "build-${PORT}"
+)
+
+vcpkg_execute_required_process(
+    COMMAND make install
     WORKING_DIRECTORY "${_build_dir}"
     LOGNAME "install-${PORT}"
 )
 
-# The "package" part: keep only minimal metadata in vcpkg.
+# Minimal vcpkg payload
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
 file(MAKE_DIRECTORY "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+
 file(INSTALL "${SOURCE_PATH}/COPYING"
      DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
      RENAME copyright)
 
-# Optional marker so it's obvious this port is a helper
+# Required marker for helper ports to silence vcpkg warning
+file(WRITE "${CURRENT_PACKAGES_DIR}/share/${PORT}/vcpkg-port-config.cmake" "# helper port\n")
+
 file(WRITE "${CURRENT_PACKAGES_DIR}/share/${PORT}/lfs-helper.txt"
 "Installed into $ENV{LFS}/tools by helper port ${PORT}\n")
