@@ -1,3 +1,6 @@
+# Helper port: installs into $LFS/tools directly, not into vcpkg sandbox.
+set(VCPKG_POLICY_CMAKE_HELPER_PORT enabled)
+
 vcpkg_download_distfile(ARCHIVE
     URLS "http://ftp.gnu.org/gnu/binutils/binutils-${VERSION}.tar.xz"
     FILENAME "binutils-${VERSION}.tar.xz"
@@ -10,17 +13,53 @@ vcpkg_extract_source_archive_ex(
     REF ${VERSION}
 )
 
+# Ensure LFS dirs exist (otherwise configure --prefix=$LFS/tools will fail later).
+if(NOT DEFINED ENV{LFS})
+    message(FATAL_ERROR "ENV{LFS} is not set. Export LFS=/mnt/lfs (or your path) before building.")
+endif()
+if(NOT DEFINED ENV{LFS_TGT})
+    message(FATAL_ERROR "ENV{LFS_TGT} is not set. Export LFS_TGT=$(uname -m)-lfs-linux-gnu before building.")
+endif()
+
+file(MAKE_DIRECTORY "$ENV{LFS}/tools")
+file(MAKE_DIRECTORY "$ENV{LFS}/tools/bin")
+
+# Prevent some headers probing weirdness + ensure makeinfo is found
 set(ENV{C_INCLUDE_PATH} "/")
 set(ENV{MAKEINFO} "${CURRENT_INSTALLED_DIR}/tools/texinfo/bin/makeinfo")
 
 vcpkg_configure_make(
-    #AUTOCONFIG # prevent fail on 'configure.ac:35: error: Please use exactly Autoconf 2.69 instead of 2.71. c'
     SOURCE_PATH ${SOURCE_PATH}
-    OPTIONS --disable-nls --disable-werror --disable-docs --enable-new-dtags --enable-default-hash-style=gnu
-    #--target=$ENV{LFS_TGT}
+    OPTIONS
+        --prefix=$ENV{LFS}/tools
+        --with-sysroot=$ENV{LFS}
+        --target=$ENV{LFS_TGT}
+        --disable-nls
+        --enable-gprofng=no
+        --disable-werror
+        --enable-new-dtags
+        --enable-default-hash-style=gnu
 )
 
-vcpkg_install_make()
+# Build normally inside vcpkg buildtrees
+vcpkg_build_make()
 
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
-file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
+# IMPORTANT:
+# Install directly into $LFS/tools (NO DESTDIR), otherwise vcpkg will redirect into ${CURRENT_PACKAGES_DIR}
+set(_build_dir "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel")
+vcpkg_execute_required_process(
+    COMMAND ${MAKE} install
+    WORKING_DIRECTORY "${_build_dir}"
+    LOGNAME "install-${PORT}"
+)
+
+# The "package" part: keep only minimal metadata in vcpkg.
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
+file(MAKE_DIRECTORY "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+file(INSTALL "${SOURCE_PATH}/COPYING"
+     DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+     RENAME copyright)
+
+# Optional marker so it's obvious this port is a helper
+file(WRITE "${CURRENT_PACKAGES_DIR}/share/${PORT}/lfs-helper.txt"
+"Installed into $ENV{LFS}/tools by helper port ${PORT}\n")

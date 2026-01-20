@@ -3,7 +3,7 @@ set -euo pipefail
 
 OUT="lfs-vcpkg-gpt-dump.txt"
 
-EXCLUDE_DIRS='.git|build|out|dist|node_modules|.vscode|.idea|.cache|vcpkg'
+EXCLUDE_DIRS='.git|build|out|dist|node_modules|.vscode|.idea|.cache|vcpkg|lfs'
 INCLUDE_EXT='(c|cpp|h|hpp|qml|cmake|txt|md|sh|py|json|yml|in)'
 EXCLUDE_FILES='(lfs-vcpkg-gpt-dump.txt$|\.html$|\.htm$|\.css$|\.svg$|\.png$|\.jpg$|\.jpeg$|\.gif$|\.ico$|\.ui$|\.min\.js$)'
 MAX_SIZE=$((500 * 1024))

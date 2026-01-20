@@ -6,8 +6,5 @@
     "The GNU Binutils are a collection of binary tools."
   ],
   "homepage": "http://www.gnu.org/software/binutils/",
-  "supports": "linux",
-  "dependencies": [
-    "texinfo"
-  ]
+  "supports": "linux"
 }
