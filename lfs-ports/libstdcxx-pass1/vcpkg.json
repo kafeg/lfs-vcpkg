@@ -1,0 +1,14 @@
+{
+  "name": "libstdcxx-pass1",
+  "version": "15.2.0",
+  "port-version": 1,
+  "description": [
+    "Target libstdc++ from GCC-15.2.0 for LFS Chapter 5 (after glibc)."
+  ],
+  "homepage": "https://gcc.gnu.org/",
+  "supports": "linux",
+  "dependencies": [
+    "gcc-pass1",
+    "glibc"
+  ]
+}

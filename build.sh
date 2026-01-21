@@ -114,6 +114,7 @@ vcpkg_install_stage "$PASS1_TRIPLET" binutils-pass1
 vcpkg_install_stage "$PASS1_TRIPLET" gcc-pass1
 vcpkg_install_stage "$PASS1_TRIPLET" linux-headers
 vcpkg_install_stage "$PASS1_TRIPLET" glibc
+vcpkg_install_stage "$PASS1_TRIPLET" libstdcxx-pass1
 
 # -----------------------------
 # Stage: TEMP (Chapter 6) - later
