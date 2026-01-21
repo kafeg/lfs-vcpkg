@@ -1,0 +1,14 @@
+{
+  "name": "glibc",
+  "version": "2.42",
+  "port-version": 1,
+  "description": [
+    "Glibc for LFS (Chapter 5, cross-compiled into $LFS via DESTDIR)."
+  ],
+  "homepage": "https://www.gnu.org/software/libc/",
+  "supports": "linux",
+  "dependencies": [
+    "gcc-pass1",
+    "linux-headers"
+  ]
+}

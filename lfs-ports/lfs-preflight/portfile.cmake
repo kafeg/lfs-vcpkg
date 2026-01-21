@@ -236,6 +236,77 @@ else()
 endif()
 
 # =============================================================================
+# Check: host build dependencies (tools)
+# =============================================================================
+message(STATUS "[lfs-preflight] Checking host build dependencies...")
+
+function(_lfs_check_prog label)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs CANDIDATES ARGS)
+    cmake_parse_arguments(P "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(NOT P_CANDIDATES)
+        message(FATAL_ERROR "[lfs-preflight] _lfs_check_prog(${label}) missing CANDIDATES")
+    endif()
+
+    set(_found "")
+    foreach(_c IN LISTS P_CANDIDATES)
+        find_program(_p ${_c})
+        if(_p)
+            set(_found "${_p}")
+            break()
+        endif()
+    endforeach()
+
+    if(_found STREQUAL "")
+        _lfs_fail("Missing host tool: ${label}. Expected one of: ${P_CANDIDATES}")
+        return()
+    endif()
+
+    # Try to run a lightweight command (prefer --version)
+    if(P_ARGS)
+        _lfs_run("${label}" COMMAND "${_found}" ${P_ARGS})
+    else()
+        # default: just show path
+        _lfs_status("${label}: ${_found}")
+    endif()
+endfunction()
+
+# --- Core tools you listed ---
+_lfs_check_prog("gcc"          CANDIDATES gcc cc          ARGS --version)
+_lfs_check_prog("git"          CANDIDATES git             ARGS --version)
+_lfs_check_prog("curl"         CANDIDATES curl            ARGS --version)
+_lfs_check_prog("zip"          CANDIDATES zip             ARGS --version)
+_lfs_check_prog("unzip"        CANDIDATES unzip           ARGS --version)
+_lfs_check_prog("tar"          CANDIDATES tar             ARGS --version)
+
+_lfs_check_prog("cmake"        CANDIDATES cmake           ARGS --version)
+_lfs_check_prog("ninja-build"  CANDIDATES ninja ninja-build ARGS --version)
+
+# pkg-config: on some systems it can be pkgconf; accept both
+_lfs_check_prog("pkg-config"   CANDIDATES pkg-config pkgconf ARGS --version)
+
+_lfs_check_prog("autoconf"     CANDIDATES autoconf        ARGS --version)
+_lfs_check_prog("automake"     CANDIDATES automake        ARGS --version)
+
+# libtool/libtool-bin: on Debian/Ubuntu the most reliable binary to check is libtoolize
+_lfs_check_prog("libtool"      CANDIDATES libtoolize libtool ARGS --version)
+
+_lfs_check_prog("m4"           CANDIDATES m4              ARGS --version)
+_lfs_check_prog("tree"         CANDIDATES tree            ARGS --version)
+_lfs_check_prog("gawk"         CANDIDATES gawk awk         ARGS --version)
+_lfs_check_prog("bison"        CANDIDATES bison           ARGS --version)
+
+# autoconf-archive: this package doesn't provide a unique binary; check for a well-known macro file.
+set(_ax_macro "/usr/share/aclocal/ax_pthread.m4")
+if(EXISTS "${_ax_macro}")
+    _lfs_status("autoconf-archive: OK (${_ax_macro})")
+else()
+    _lfs_fail("Missing host dependency: autoconf-archive (expected ${_ax_macro})")
+endif()
+
+# =============================================================================
 # Done
 # =============================================================================
 _lfs_status("Preflight OK (mode: $<IF:$<BOOL:${_strict}>,strict,soft>)")
