@@ -1,0 +1,16 @@
+{
+  "name": "lfs-sanity-pass1",
+  "version": "0.1.0",
+  "port-version": 1,
+  "description": [
+    "Sanity checks after LFS Chapter 5 (pass1 toolchain + headers + glibc + libstdc++)."
+  ],
+  "supports": "linux",
+  "dependencies": [
+    "binutils-pass1",
+    "gcc-pass1",
+    "linux-headers",
+    "glibc",
+    "libstdcxx-pass1"
+  ]
+}
