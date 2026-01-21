@@ -1,0 +1,13 @@
+{
+  "name": "linux-headers",
+  "version": "6.16.1",
+  "port-version": 1,
+  "description": [
+    "Linux kernel API headers for LFS (Chapter 5)."
+  ],
+  "homepage": "https://www.kernel.org/",
+  "supports": "linux",
+  "dependencies": [
+    "gcc-pass1"
+  ]
+}

@@ -112,6 +112,7 @@ export VCPKG_DEFAULT_TRIPLET="$PASS1_TRIPLET"
 #vcpkg_install_stage "$PASS1_TRIPLET" texinfo
 vcpkg_install_stage "$PASS1_TRIPLET" binutils-pass1
 vcpkg_install_stage "$PASS1_TRIPLET" gcc-pass1
+vcpkg_install_stage "$PASS1_TRIPLET" linux-headers
 
 # -----------------------------
 # Stage: TEMP (Chapter 6) - later
